@@ -5,9 +5,6 @@
 <title>Bill Builder</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- jsPDF CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <style>
 body{
   font-family: Arial, sans-serif;
@@ -23,7 +20,7 @@ body{
   background:#fff;
   padding:18px;
   border-radius:8px;
-  box-shadow:0 010px rgba(0,0,0,.1);
+  box-shadow:0 0 10px rgba(0,0,0,.1);
 }
 
 /* ---------- FORM ---------- */
@@ -96,7 +93,6 @@ button{
 .add-btn{background:#28a745;color:#fff}
 .gen-btn{background:#007bff;color:#fff}
 .back-btn{background:#6c757d;color:#fff}
-.save-btn{background:#17a2b8;color:#fff}
 
 /* ---------- BILL VIEW ---------- */
 .bill-row{
@@ -137,7 +133,6 @@ button{
 
   <div id="billContent"></div>
 
-  <button class="save-btn" onclick="savePDF()">💾 Save as PDF</button>
   <button class="back-btn" onclick="goBack()">⬅ Back</button>
 
 </div>
@@ -149,9 +144,6 @@ const API_KEY = "9848o22338B!";
 
 let groceries = {};
 let dealerItems = [];
-let finalBill = [];
-let finalDealer = "";
-let finalGrand = 0;
 
 window.onload = () => {
   fetch(`${API_URL}?key=${API_KEY}`)
@@ -230,9 +222,9 @@ function addItem(){
 }
 
 function generateBill(){
-  finalBill = [];
-  finalGrand = 0;
-  finalDealer = dealerSelect.value;
+  const dealer = dealerSelect.value;
+  let bill = [];
+  let grand = 0;
 
   document.querySelectorAll(".item-row").forEach(r => {
     const sel = r.children[0];
@@ -241,19 +233,19 @@ function generateBill(){
 
     const price = Number(sel.selectedOptions[0].dataset.price);
     const total = qty * price;
-    finalGrand += total;
+    grand += total;
 
-    finalBill.push({ item: sel.value, qty, price, total });
+    bill.push({ item: sel.value, qty, price, total });
   });
 
-  if(!finalBill.length) return;
+  if(!bill.length) return;
 
   billContent.innerHTML = `
     <h2 style="text-align:center">Invoice</h2>
-    <div><b>Dealer:</b> ${finalDealer}</div>
+    <div><b>Dealer:</b> ${dealer}</div>
     <div><b>Date:</b> ${new Date().toLocaleString()}</div>
     <hr>
-    ${finalBill.map(b => `
+    ${bill.map(b => `
       <div class="bill-row">
         <span>${b.item} (${b.qty} × ₹${b.price})</span>
         <span>₹${b.total}</span>
@@ -262,7 +254,7 @@ function generateBill(){
     <hr>
     <div class="bill-row bill-grand">
       <span>Grand Total</span>
-      <span>₹${finalGrand}</span>
+      <span>₹${grand}</span>
     </div>
   `;
 
@@ -273,56 +265,6 @@ function generateBill(){
 function goBack(){
   billView.classList.add("hidden");
   builderView.classList.remove("hidden");
-}
-
-/* -------- PDF GENERATION -------- */
-function savePDF(){
-
-  if (!window.jspdf || !window.jspdf.jsPDF) {
-    alert("PDF library not loaded. Please refresh the page.");
-    return;
-  }
-
-  const doc = new window.jspdf.jsPDF();
-
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("en-GB").replace(/\//g, "-");
-  const timeStr = now
-    .toLocaleTimeString("en-GB", { hour12: false })
-    .replace(/:/g, "-");
-
-  let y = 15;
-
-  doc.setFontSize(16);
-  doc.text("Invoice", 105, y, { align: "center" });
-  y += 10;
-
-  doc.setFontSize(11);
-  doc.text(`Dealer: ${finalDealer}`, 10, y); 
-  y += 6;
-  doc.text(`Date: ${dateStr} ${timeStr.replace(/-/g, ":")}`, 10, y); 
-  y += 8;
-
-  doc.line(10, y, 200, y);
-  y += 6;
-
-  finalBill.forEach(b => {
-    doc.text(`${b.item} (${b.qty} x ${b.price})`, 10, y);
-    doc.text(`₹${b.total}`, 190, y, { align: "right" });
-    y += 6;
-  });
-
-  y += 4;
-  doc.line(10, y, 200, y);
-  y += 8;
-
-  doc.setFontSize(13);
-  doc.text("Grand Total", 10, y);
-  doc.text(`₹${finalGrand}`, 190, y, { align: "right" });
-
-  const fileName = `Invoice_${dateStr}_${timeStr}.pdf`;
-
-  doc.save(fileName);
 }
 </script>
 
