@@ -5,6 +5,9 @@
 <title>Bill Builder</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- jsPDF CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 body{
   font-family: Arial, sans-serif;
@@ -23,6 +26,7 @@ body{
   box-shadow:0 0 10px rgba(0,0,0,.1);
 }
 
+/* ---------- FORM ---------- */
 label{
   font-size:13px;
   font-weight:600;
@@ -30,7 +34,6 @@ label{
   margin-top:12px;
 }
 
-/* ✅ PERFECT SIZE NORMALIZATION */
 select,
 input{
   width:100%;
@@ -45,24 +48,18 @@ input{
   color:#000;
 }
 
-/* Remove number arrows */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button{
   -webkit-appearance:none;
-  margin:0;
 }
-input[type=number]{
-  -moz-appearance:textfield;
-}
+input[type=number]{ -moz-appearance:textfield; }
 
-/* Dropdown fix for Android */
 select{
   -webkit-appearance:none;
-  -moz-appearance:none;
   appearance:none;
 }
 
-/* GRID ALIGNMENT */
+/* GRID */
 .item-row{
   display:grid;
   grid-template-columns: 1.6fr 0.7fr 0.7fr 36px;
@@ -85,7 +82,7 @@ select{
   cursor:pointer;
 }
 
-/* Buttons */
+/* BUTTONS */
 button{
   width:100%;
   height:40px;
@@ -95,33 +92,33 @@ button{
   cursor:pointer;
   font-size:14px;
 }
+
 .add-btn{background:#28a745;color:#fff}
 .gen-btn{background:#007bff;color:#fff}
+.back-btn{background:#6c757d;color:#fff}
+.save-btn{background:#17a2b8;color:#fff}
 
-/* BILL */
-.bill-box{
-  margin-top:20px;
-  padding:14px;
-  background:#e9ecef;
-  border-radius:6px;
-}
+/* ---------- BILL VIEW ---------- */
 .bill-row{
   display:flex;
   justify-content:space-between;
   margin-top:6px;
 }
+
 .bill-grand{
   font-weight:bold;
-  font-size:16px;
+  font-size:18px;
   margin-top:10px;
 }
+
 .hidden{display:none}
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- ================= BUILDER VIEW ================= -->
+<div class="container" id="builderView">
 
   <label>Select Dealer</label>
   <select id="dealerSelect" onchange="loadItems()">
@@ -133,8 +130,15 @@ button{
   <button class="add-btn" onclick="addItem()">➕ Add Item</button>
   <button class="gen-btn" onclick="generateBill()">Generate Bill</button>
 
-  <!-- FINAL BILL -->
-  <div id="billBox" class="bill-box hidden"></div>
+</div>
+
+<!-- ================= BILL VIEW ================= -->
+<div class="container hidden" id="billView">
+
+  <div id="billContent"></div>
+
+  <button class="save-btn" onclick="savePDF()">💾 Save as PDF</button>
+  <button class="back-btn" onclick="goBack()">⬅ Back</button>
 
 </div>
 
@@ -145,6 +149,9 @@ const API_KEY = "9848o22338B!";
 
 let groceries = {};
 let dealerItems = [];
+let finalBill = [];
+let finalDealer = "";
+let finalGrand = 0;
 
 window.onload = () => {
   fetch(`${API_URL}?key=${API_KEY}`)
@@ -167,9 +174,7 @@ function populateDealers(){
 
 function loadItems(){
   itemsContainer.innerHTML = "";
-  billBox.classList.add("hidden");
   dealerItems = [];
-
   const dealer = dealerSelect.value;
   if(!dealer) return;
 
@@ -194,9 +199,7 @@ function addItem(){
   sel.innerHTML =
     `<option value="">Item</option>` +
     dealerItems.map(i =>
-      `<option value="${i.item}" data-price="${i.price}">
-        ${i.item}
-      </option>`
+      `<option value="${i.item}" data-price="${i.price}">${i.item}</option>`
     ).join("");
 
   const qty = document.createElement("input");
@@ -227,8 +230,9 @@ function addItem(){
 }
 
 function generateBill(){
-  billBox.innerHTML = "<b>Final Bill</b>";
-  let grand = 0;
+  finalBill = [];
+  finalGrand = 0;
+  finalDealer = dealerSelect.value;
 
   document.querySelectorAll(".item-row").forEach(r => {
     const sel = r.children[0];
@@ -237,23 +241,59 @@ function generateBill(){
 
     const price = Number(sel.selectedOptions[0].dataset.price);
     const total = qty * price;
-    grand += total;
+    finalGrand += total;
 
-    billBox.innerHTML += `
-      <div class="bill-row">
-        <span>${sel.value} (${qty} × ₹${price})</span>
-        <span>₹${total}</span>
-      </div>`;
+    finalBill.push({ item: sel.value, qty, price, total });
   });
 
-  billBox.innerHTML += `
+  if(!finalBill.length) return;
+
+  billContent.innerHTML = `
+    <h2 style="text-align:center">Invoice</h2>
+    <div><b>Dealer:</b> ${finalDealer}</div>
+    <div><b>Date:</b> ${new Date().toLocaleDateString()}</div>
+    <hr>
+    ${finalBill.map(b => `
+      <div class="bill-row">
+        <span>${b.item} (${b.qty} × ₹${b.price})</span>
+        <span>₹${b.total}</span>
+      </div>
+    `).join("")}
+    <hr>
     <div class="bill-row bill-grand">
       <span>Grand Total</span>
-      <span>₹${grand}</span>
-    </div>`;
+      <span>₹${finalGrand}</span>
+    </div>
+  `;
 
-  billBox.classList.remove("hidden");
+  builderView.classList.add("hidden");
+  billView.classList.remove("hidden");
 }
+
+function goBack(){
+  billView.classList.add("hidden");
+  builderView.classList.remove("hidden");
+}
+
+/* -------- PDF GENERATION -------- */
+function savePDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let y = 15;
+  doc.setFontSize(16);
+  doc.text("Invoice", 105, y, { align: "center" });
+  y += 10;
+
+  const now = new Date();
+
+  const dateStr = now.toLocaleDateString("en-GB");
+  const timeStr = now
+    .toLocaleTimeString("en-GB")
+    .replace(/:/g, "-");
+
+  doc.setFontSize(11);
+  doc.text(`Dealer: ${finalDealer}`,
 </script>
 
 </body>
