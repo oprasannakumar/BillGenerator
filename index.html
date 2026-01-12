@@ -23,7 +23,7 @@ body{
   background:#fff;
   padding:18px;
   border-radius:8px;
-  box-shadow:0 0 10px rgba(0,0,0,.1);
+  box-shadow:0 010px rgba(0,0,0,.1);
 }
 
 /* ---------- FORM ---------- */
@@ -251,7 +251,7 @@ function generateBill(){
   billContent.innerHTML = `
     <h2 style="text-align:center">Invoice</h2>
     <div><b>Dealer:</b> ${finalDealer}</div>
-    <div><b>Date:</b> ${new Date().toLocaleDateString()}</div>
+    <div><b>Date:</b> ${new Date().toLocaleString()}</div>
     <hr>
     ${finalBill.map(b => `
       <div class="bill-row">
@@ -280,6 +280,12 @@ function savePDF(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("en-GB").replace(/\//g, "-");
+  const timeStr = now
+    .toLocaleTimeString("en-GB", { hour12:false })
+    .replace(/:/g, "-");
+
   let y = 15;
   doc.setFontSize(16);
   doc.text("Invoice", 105, y, { align: "center" });
@@ -287,7 +293,7 @@ function savePDF(){
 
   doc.setFontSize(11);
   doc.text(`Dealer: ${finalDealer}`, 10, y); y += 6;
-  doc.text(`Date: ${new Date().toLocaleDateString()}`, 10, y); y += 8;
+  doc.text(`Date: ${dateStr} ${timeStr.replace(/-/g, ":")}`, 10, y); y += 8;
 
   doc.line(10, y, 200, y); y += 6;
 
@@ -304,8 +310,9 @@ function savePDF(){
   doc.text("Grand Total", 10, y);
   doc.text(`₹${finalGrand}`, 190, y, { align: "right" });
 
-  const name = `Invoice_${finalDealer}_${Date.now()}.pdf`;
-  doc.save(name);
+  /* ✅ FILE NAME = DATE + TIME */
+  const fileName = `Invoice_${dateStr}_${timeStr}.pdf`;
+  doc.save(fileName);
 }
 </script>
 
