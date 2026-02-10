@@ -1,271 +1,399 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Bill Builder</title>
+<title>Invoice Entry</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
+*{box-sizing:border-box;}
+
 body{
-  font-family: Arial, sans-serif;
-  background:#f5f5f5;
-  padding:20px;
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:#f4f6f9;
   display:flex;
   justify-content:center;
+  padding:60px 20px;
 }
 
-.container{
+.card{
   width:100%;
   max-width:520px;
-  background:#fff;
-  padding:18px;
-  border-radius:8px;
-  box-shadow:0 0 10px rgba(0,0,0,.1);
+  background:#ffffff;
+  border-radius:14px;
+  padding:35px 32px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.06);
 }
 
-/* ---------- FORM ---------- */
+h2{
+  margin:0 0 28px 0;
+  font-weight:600;
+}
+
+.form-group{
+  margin-bottom:22px;
+}
+
 label{
   font-size:13px;
-  font-weight:600;
+  font-weight:500;
+  color:#555;
   display:block;
-  margin-top:12px;
+  margin-bottom:8px;
 }
 
-select,
-input{
+input,select{
   width:100%;
-  height:38px;
-  padding:0 8px;
-  border-radius:4px;
-  border:1px solid #ccc;
+  height:44px;
+  padding:0 14px;
+  border-radius:8px;
+  border:1px solid #e3e6eb;
   font-size:14px;
-  background:#fff;
-  box-sizing:border-box;
-  line-height:38px;
-  color:#000;
+  background:#fafbfc;
 }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button{
-  -webkit-appearance:none;
-}
-input[type=number]{ -moz-appearance:textfield; }
-
-select{
-  -webkit-appearance:none;
-  appearance:none;
-}
-
-/* GRID */
-.item-row{
-  display:grid;
-  grid-template-columns: 1.6fr 0.7fr 0.7fr 36px;
-  gap:8px;
-  align-items:center;
+.button-row{
+  display:flex;
+  gap:12px;
   margin-top:10px;
 }
 
-.item-total{
-  font-weight:bold;
-  text-align:right;
+button{
+  flex:1;
+  height:44px;
+  border:none;
+  border-radius:8px;
+  font-weight:500;
+  cursor:pointer;
+}
+
+.add-btn{
+  background:#eef1ff;
+  color:#4c56d7;
+}
+
+.save-btn{
+  background:#5b6cff;
+  color:white;
+}
+
+.item-block{
+  margin-bottom:20px;
+}
+
+.item-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
 }
 
 .delete-btn{
-  background:#dc3545;
-  color:#fff;
+  width:44px;
+  height:44px;
   border:none;
-  border-radius:4px;
-  height:36px;
-  cursor:pointer;
-}
-
-/* BUTTONS */
-button{
-  width:100%;
-  height:40px;
-  margin-top:14px;
-  border:none;
-  border-radius:4px;
-  cursor:pointer;
-  font-size:14px;
-}
-
-.add-btn{background:#28a745;color:#fff}
-.gen-btn{background:#007bff;color:#fff}
-.back-btn{background:#6c757d;color:#fff}
-
-/* ---------- BILL VIEW ---------- */
-.bill-row{
-  display:flex;
-  justify-content:space-between;
-  margin-top:6px;
-}
-
-.bill-grand{
-  font-weight:bold;
+  background:#fee2e2;
+  color:#b91c1c;
+  border-radius:8px;
   font-size:18px;
+  cursor:pointer;
+}
+
+.qty-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
   margin-top:10px;
 }
 
-.hidden{display:none}
+.total-field{
+  background:#eef2f7;
+  font-weight:600;
+}
 </style>
 </head>
 
 <body>
 
-<!-- ================= BUILDER VIEW ================= -->
-<div class="container" id="builderView">
+<div class="card">
 
-  <label>Select Dealer</label>
-  <select id="dealerSelect" onchange="loadItems()">
-    <option value="">-- Select Dealer --</option>
-  </select>
+<h2>Invoice Entry</h2>
 
-  <div id="itemsContainer"></div>
-
-  <button class="add-btn" onclick="addItem()">➕ Add Item</button>
-  <button class="gen-btn" onclick="generateBill()">Generate Bill</button>
-
+<div class="form-group">
+  <label>Date</label>
+  <input type="date" id="billDate">
 </div>
 
-<!-- ================= BILL VIEW ================= -->
-<div class="container hidden" id="billView">
+<div class="form-group">
+  <label>Select Dealer</label>
+  <select id="dealerSelect" onchange="loadItems()">
+    <option value="">Select Dealer</option>
+  </select>
+</div>
 
-  <div id="billContent"></div>
+<div class="form-group">
+  <label>Invoice Number</label>
+  <input type="text" id="invoiceNumber" placeholder="Auto if empty">
+</div>
 
-  <button class="back-btn" onclick="goBack()">⬅ Back</button>
+<div id="itemsContainer"></div>
+
+<div class="button-row">
+  <button class="add-btn" onclick="addItem()">+ Add Item</button>
+  <button class="save-btn" onclick="saveInvoice()">Save Bill</button>
+</div>
 
 </div>
 
 <script>
-const API_URL =
-"https://script.google.com/macros/s/AKfycbzRt_ad2rXgZNVO4_Nlumm8EAxN7jcG7gG1y0yKEec7WXnws68ygcAqrhCjRzcmdWzl/exec";
+
+const API_URL = "https://script.google.com/macros/s/AKfycbyGbUkkZBP480n_U_fsCNppCD6T06GT0Tbh4gI1PsBxGdmc-wpnKHzZi-kahxderWpv/exec";
 const API_KEY = "9848o22338B!";
 
 let groceries = {};
 let dealerItems = [];
 
 window.onload = () => {
+
+  // Set today's date default
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth()+1).padStart(2,'0');
+  const dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById("billDate").value = `${yyyy}-${mm}-${dd}`;
+
   fetch(`${API_URL}?key=${API_KEY}`)
-    .then(r => r.json())
-    .then(d => {
-      groceries = d || {};
-      populateDealers();
-    });
+  .then(r=>r.json())
+  .then(data=>{
+    groceries=data||{};
+    populateDealers();
+  });
 };
 
 function populateDealers(){
-  const set = new Set();
-  Object.values(groceries).forEach(a =>
-    a.forEach(d => set.add(d.dealer))
+  const set=new Set();
+  Object.values(groceries).forEach(a=>
+    a.forEach(d=>set.add(d.dealer))
   );
-  [...set].sort().forEach(d =>
-    dealerSelect.add(new Option(d, d))
+  [...set].sort().forEach(d=>
+    dealerSelect.add(new Option(d,d))
   );
 }
 
 function loadItems(){
-  itemsContainer.innerHTML = "";
-  dealerItems = [];
-  const dealer = dealerSelect.value;
+  dealerItems=[];
+  const dealer=dealerSelect.value;
   if(!dealer) return;
 
-  Object.keys(groceries).forEach(item => {
-    groceries[item].forEach(d => {
-      if(d.dealer === dealer){
-        dealerItems.push({ item, price: d.price });
+  Object.keys(groceries).forEach(item=>{
+    groceries[item].forEach(d=>{
+      if(d.dealer===dealer){
+        dealerItems.push({item,price:d.price});
       }
     });
   });
-
-  dealerItems.sort((a,b)=>a.item.localeCompare(b.item));
 }
 
 function addItem(){
   if(!dealerItems.length) return;
 
-  const row = document.createElement("div");
-  row.className = "item-row";
+  const wrapper=document.createElement("div");
+  wrapper.className="item-block";
 
-  const sel = document.createElement("select");
-  sel.innerHTML =
-    `<option value="">Item</option>` +
-    dealerItems.map(i =>
-      `<option value="${i.item}" data-price="${i.price}">${i.item}</option>`
-    ).join("");
+  const itemRow=document.createElement("div");
+  itemRow.className="item-row";
 
-  const qty = document.createElement("input");
-  qty.type = "number";
-  qty.min = "0";
-  qty.placeholder = "Qty";
+  const sel=document.createElement("select");
+  sel.innerHTML=`<option value="">Item</option>`+
+  dealerItems.map(i=>
+    `<option value="${i.item}" data-price="${i.price}">
+      ${i.item}
+    </option>`
+  ).join("");
 
-  const total = document.createElement("div");
-  total.className = "item-total";
-  total.textContent = "₹0";
+  const del=document.createElement("button");
+  del.innerHTML="×";
+  del.className="delete-btn";
+  del.onclick=()=>wrapper.remove();
 
-  const del = document.createElement("button");
-  del.textContent = "🗑";
-  del.className = "delete-btn";
-  del.onclick = () => row.remove();
+  itemRow.append(sel,del);
+
+  const qtyRow=document.createElement("div");
+  qtyRow.className="qty-row";
+
+  const qty=document.createElement("input");
+  qty.type="number";
+  qty.placeholder="Qty";
+
+  const price=document.createElement("input");
+  price.type="number";
+  price.placeholder="Price";
+
+  const total=document.createElement("input");
+  total.readOnly=true;
+  total.className="total-field";
+  total.placeholder="Total";
 
   function recalc(){
-    const price = Number(sel.selectedOptions[0]?.dataset.price || 0);
-    const q = Number(qty.value || 0);
-    total.textContent = `₹${price * q}`;
+    const q=Number(qty.value||0);
+    const p=Number(price.value||0);
+    total.value=q*p;
   }
 
-  sel.onchange = recalc;
-  qty.oninput = recalc;
+  sel.onchange=()=>{
+    const dbPrice=Number(sel.selectedOptions[0]?.dataset.price||0);
+    price.value=dbPrice;
+    recalc();
+  };
 
-  row.append(sel, qty, total, del);
-  itemsContainer.appendChild(row);
+  qty.oninput=recalc;
+  price.oninput=recalc;
+
+  qtyRow.append(qty,price,total);
+
+  wrapper.append(itemRow,qtyRow);
+  itemsContainer.appendChild(wrapper);
 }
+function renderInvoice(billNo,date,dealer,items,grandTotal){
 
-function generateBill(){
-  const dealer = dealerSelect.value;
-  let bill = [];
-  let grand = 0;
+  document.querySelector(".card").style.display="none";
 
-  document.querySelectorAll(".item-row").forEach(r => {
-    const sel = r.children[0];
-    const qty = Number(r.children[1].value);
-    if(!sel.value || !qty) return;
+  const container=document.createElement("div");
+  container.style.maxWidth="750px";
+  container.style.margin="40px auto";
+  container.style.background="#fff";
+  container.style.padding="40px";
+  container.style.borderRadius="12px";
+  container.style.boxShadow="0 10px 30px rgba(0,0,0,0.08)";
+  container.style.fontFamily="Inter";
 
-    const price = Number(sel.selectedOptions[0].dataset.price);
-    const total = qty * price;
-    grand += total;
+  container.innerHTML=`
+    <h2 style="margin-top:0;">Invoice</h2>
 
-    bill.push({ item: sel.value, qty, price, total });
-  });
+    <div style="margin-bottom:20px;">
+      <div><strong>Invoice No:</strong> ${billNo}</div>
+      <div><strong>Date:</strong> ${formatDisplayDate(date)}</div>
+      <div><strong>Dealer:</strong> ${dealer}</div>
+    </div>
 
-  if(!bill.length) return;
+    <table style="width:100%;border-collapse:collapse;margin-top:20px;">
+      <thead>
+        <tr style="background:#f4f6f9;">
+          <th style="padding:10px;text-align:left;">Item</th>
+          <th style="padding:10px;text-align:right;">Qty</th>
+          <th style="padding:10px;text-align:right;">Price</th>
+          <th style="padding:10px;text-align:right;">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${items.map(i=>`
+          <tr>
+            <td style="padding:10px;border-bottom:1px solid #eee;">${i.item}</td>
+            <td style="padding:10px;text-align:right;border-bottom:1px solid #eee;">${i.qty}</td>
+            <td style="padding:10px;text-align:right;border-bottom:1px solid #eee;">₹${i.price}</td>
+            <td style="padding:10px;text-align:right;border-bottom:1px solid #eee;">₹${i.total}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
 
-  billContent.innerHTML = `
-    <h2 style="text-align:center">Invoice</h2>
-    <div><b>Dealer:</b> ${dealer}</div>
-    <div><b>Date:</b> ${new Date().toLocaleString()}</div>
-    <hr>
-    ${bill.map(b => `
-      <div class="bill-row">
-        <span>${b.item} (${b.qty} × ₹${b.price})</span>
-        <span>₹${b.total}</span>
-      </div>
-    `).join("")}
-    <hr>
-    <div class="bill-row bill-grand">
-      <span>Grand Total</span>
-      <span>₹${grand}</span>
+    <div style="
+      text-align:right;
+      font-size:18px;
+      font-weight:600;
+      margin-top:20px;
+    ">
+      Grand Total: ₹${grandTotal}
+    </div>
+
+    <div style="margin-top:30px;display:flex;gap:10px;">
+      <button onclick="window.print()" style="
+        flex:1;
+        height:44px;
+        border:none;
+        border-radius:8px;
+        background:#5b6cff;
+        color:white;
+        cursor:pointer;
+      ">Print</button>
+
+      <button onclick="location.reload()" style="
+        flex:1;
+        height:44px;
+        border:none;
+        border-radius:8px;
+        background:#e5e7eb;
+        cursor:pointer;
+      ">New Invoice</button>
+    </div>
+
+    <div style="margin-top:15px;font-size:12px;color:#666;">
+      Invoice number copied to clipboard.
     </div>
   `;
 
-  builderView.classList.add("hidden");
-  billView.classList.remove("hidden");
+  document.body.appendChild(container);
+}
+function formatDisplayDate(dateStr){
+  const d=new Date(dateStr);
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return d.getDate()+"-"+months[d.getMonth()]+"-"+d.getFullYear();
+}
+function saveInvoice(){
+
+  const dealer = dealerSelect.value;
+  if(!dealer){ alert("Select dealer"); return; }
+
+  const billDate = document.getElementById("billDate").value;
+  let billNo = document.getElementById("invoiceNumber").value.trim();
+
+  // 🔥 Generate instantly if empty
+  if(!billNo){
+    billNo = "INV-" + Date.now();
+  }
+
+  let items=[];
+  let grandTotal=0;
+
+  document.querySelectorAll(".item-block").forEach(w=>{
+    const item=w.querySelector("select").value;
+    const inputs=w.querySelectorAll("input");
+    const qty=Number(inputs[0].value);
+    const price=Number(inputs[1].value);
+    const total=Number(inputs[2].value);
+
+    if(!item||!qty) return;
+
+    grandTotal+=total;
+    items.push({item,qty,price,total});
+  });
+
+  if(!items.length){ alert("Add items"); return; }
+
+  // 🔥 Immediately render invoice
+  renderInvoice(billNo,billDate,dealer,items,grandTotal);
+
+  // 🔥 Copy invoice number
+  navigator.clipboard.writeText(billNo);
+
+  // 🔥 Save in background (no waiting)
+  fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      key:API_KEY,
+      action:"saveInvoice",
+      shopName:dealer,
+      billNo:billNo,
+      billDate:billDate,
+      items:items
+    })
+  });
+
 }
 
-function goBack(){
-  billView.classList.add("hidden");
-  builderView.classList.remove("hidden");
-}
+
 </script>
 
 </body>
