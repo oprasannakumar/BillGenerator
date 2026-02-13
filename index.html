@@ -26,6 +26,7 @@ body{
   border-radius:14px;
   padding:35px 32px;
   box-shadow:0 8px 24px rgba(0,0,0,0.06);
+  position:relative;   /* 🔥 important */
 }
 
 h2{
@@ -107,13 +108,66 @@ button{
   gap:10px;
   margin-top:10px;
 }
+/* --- Top Right Quick Links --- */
+
+.quick-links-wrapper{
+  position:absolute;
+  top:16px;
+  right:16px;
+}
+
+.quick-links-btn{
+  width:34px;
+  height:34px;
+  border:none;
+  border-radius:8px;
+  background:#eef1ff;
+  color:#4c56d7;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.quick-links-menu{
+  position:absolute;
+  top:40px;
+  right:0;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  overflow:hidden;
+  display:none;
+  min-width:220px;
+}
+
+.quick-links-menu a{
+  display:block;
+  padding:10px 14px;
+  text-decoration:none;
+  font-size:13px;
+  color:#333;
+}
+
+.quick-links-menu a:hover{
+  background:#f4f6f9;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="card">
-
+<div class="quick-links-wrapper">
+  <button class="quick-links-btn" onclick="toggleLinks()">☰</button>
+  <div class="quick-links-menu" id="quickLinksMenu">
+    <a href="https://oprasannakumar.github.io/MonthlytransactionsGoogleSheets/" target="_blank">
+      📊 Monthly Transactions
+    </a>
+    <a href="https://oprasannakumar.github.io/LoanTransferGoogleSheets/" target="_blank">
+      💳 Loan Entry
+    </a>
+  </div>
+</div>
 <h2>Invoice Entry</h2>
 
 <div class="form-group">
@@ -408,6 +462,17 @@ function formatDisplayDate(dateStr){
   const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   return d.getDate()+"-"+months[d.getMonth()]+"-"+d.getFullYear();
 }
+function toggleLinks(){
+  const menu=document.getElementById("quickLinksMenu");
+  menu.style.display = menu.style.display==="block" ? "none" : "block";
+}
+
+document.addEventListener("click",function(e){
+  if(!e.target.closest(".quick-links-wrapper")){
+    const menu=document.getElementById("quickLinksMenu");
+    if(menu) menu.style.display="none";
+  }
+});
 
 </script>
 
