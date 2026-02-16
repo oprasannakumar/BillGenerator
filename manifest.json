@@ -3,7 +3,7 @@
   "short_name": "Bill Generator",
   "description": "Lookup, add, and manage invoices with real-time sync.",
   "start_url": "./index.html",
-  "display: "standalone",
+  "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "icons": [
