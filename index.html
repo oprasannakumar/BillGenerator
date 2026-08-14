@@ -2,115 +2,102 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Invoice Entry</title>
+<title>Invoice Manager</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#5b6cff">
+<meta name="theme-color" content="#090d16">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
   :root {
-    --primary: #5b6cff;
-    --primary-hover: #4757e6;
-    --primary-light: #eef1ff;
-    --bg-color: #f4f6f9;
-    --card-bg: #ffffff;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --border-color: #e2e8f0;
+    --bg-body: #090d16;
+    --bg-card: #111827;
+    --bg-surface: #1f2937;
+    --bg-hover: #374151;
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: #374151;
+    --primary: #10b981;
+    --primary-hover: #059669;
+    --primary-light: rgba(16, 185, 129, 0.15);
+    --secondary: #6366f1;
     --danger: #ef4444;
-    --danger-light: #fee2e2;
+    --danger-light: rgba(239, 68, 68, 0.15);
   }
 
   * { box-sizing: border-box; }
 
   body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background: var(--bg-color);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg-body);
     color: var(--text-main);
     display: flex;
     justify-content: center;
-    padding: 30px 16px;
+    padding: 20px 16px;
+    min-height: 100vh;
+    margin: 0;
   }
 
   .app-container {
     width: 100%;
-    max-width: 600px;
-    background: var(--card-bg);
+    max-width: 520px;
+    background: var(--bg-card);
     border-radius: 20px;
-    padding: 32px 28px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    padding: 28px 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
     position: relative;
+    height: fit-content;
   }
 
   .header-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
 
-  h2 {
+  h2, h3 {
     margin: 0;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
-    letter-spacing: -0.5px;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, #34d399, #6366f1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
-  /* Top Right Quick Links */
-  .quick-links-wrapper {
-    position: relative;
-  }
-
-  .quick-links-btn {
-    width: 38px;
-    height: 38px;
-    border: none;
-    border-radius: 10px;
-    background: var(--primary-light);
-    color: var(--primary);
-    font-size: 18px;
-    cursor: pointer;
+  /* Navigation Tabs */
+  .nav-tabs {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-  }
-
-  .quick-links-btn:hover {
-    background: #e0e7ff;
-  }
-
-  .quick-links-menu {
-    position: absolute;
-    top: 46px;
-    right: 0;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    display: none;
-    min-width: 220px;
-    z-index: 100;
+    gap: 8px;
+    background: var(--bg-surface);
+    padding: 4px;
+    border-radius: 14px;
+    margin-bottom: 24px;
     border: 1px solid var(--border-color);
   }
 
-  .quick-links-menu a {
-    display: block;
-    padding: 12px 16px;
-    text-decoration: none;
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
     font-size: 13px;
-    font-weight: 500;
-    color: var(--text-main);
-    transition: background 0.15s;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
   }
 
-  .quick-links-menu a:hover {
-    background: var(--bg-color);
+  .tab-btn.active {
+    background: var(--bg-hover);
+    color: var(--text-main);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   }
 
   /* Form Elements */
@@ -125,48 +112,146 @@
   }
 
   label {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     color: var(--text-muted);
     display: block;
     margin-bottom: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-left: 2px;
   }
 
-  input, select {
+  input {
     width: 100%;
     height: 46px;
     padding: 0 14px;
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid var(--border-color);
     font-size: 14px;
-    background: #fafbfc;
-    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    background: var(--bg-surface);
+    font-family: 'Plus Jakarta Sans', sans-serif;
     color: var(--text-main);
-    transition: all 0.2s;
-  }
-
-  input:focus, select:focus {
+    transition: all 0.25s ease;
     outline: none;
-    border-color: var(--primary);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(91, 108, 255, 0.1);
+    text-align: center;
   }
 
-  /* Recipient Section Styling */
-  .recipient-block {
-    background: #f8fafc;
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 20px;
+  /* Custom Select Replacements */
+  .custom-select-wrapper {
     position: relative;
-    transition: border-color 0.2s;
+    width: 100%;
   }
 
-  .recipient-block:hover {
-    border-color: #cbd5e1;
+  .select-input {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+    padding-right: 40px;
+    text-align: left;
+  }
+
+  .select-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .custom-options-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-top: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    display: none;
+    flex-direction: column;
+  }
+
+  .custom-options-list.show {
+    display: flex;
+  }
+
+  .custom-option {
+    padding: 14px 16px;
+    cursor: pointer;
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    transition: background 0.15s;
+  }
+
+  .custom-option:last-child {
+    border-bottom: none;
+  }
+
+  .custom-option:hover {
+    background: var(--bg-hover);
+  }
+
+  .empty-option {
+    color: var(--text-muted);
+    font-style: italic;
+    cursor: default;
+  }
+
+  input[type="text"] {
+    text-align: left;
+    padding: 0 14px;
+  }
+
+  input:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+    background: var(--bg-card);
+  }
+
+  /* Swipeable Recipient Group Styles */
+  .recipient-swipe-container {
+    background: var(--danger-light);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 14px;
+    margin-bottom: 16px;
+    overflow: visible; /* Default visible so dropdowns work */
+    position: relative;
+  }
+
+  .swipe-bg-group {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--danger);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 1;
+    border-radius: 14px; 
+  }
+
+  .recipient-block {
+    background: var(--bg-surface);
+    padding: 16px;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.2s ease;
+    touch-action: pan-y;
+    border-radius: 14px;
   }
 
   .recipient-top-bar {
@@ -177,38 +262,58 @@
   }
 
   .recipient-tag {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--primary);
-    background: var(--primary-light);
+    font-size: 12px;
+    font-weight: 700;
+    color: #a5b4fc;
+    background: rgba(99, 102, 241, 0.15);
     padding: 4px 10px;
-    border-radius: 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(99, 102, 241, 0.3);
   }
 
-  .remove-recipient-btn {
-    background: none;
-    border: none;
-    color: var(--danger);
+  .recipient-swipe-instruction {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* Swipeable Item Styles */
+  .item-block {
+    background: var(--danger-light);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: visible; /* Default visible so dropdowns work */
+    position: relative;
+  }
+
+  .swipe-bg-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--danger);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 20px;
     font-size: 12px;
     font-weight: 600;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: background 0.15s;
+    z-index: 1;
+    border-radius: 12px;
   }
 
-  .remove-recipient-btn:hover {
-    background: var(--danger-light);
-  }
-
-  /* Item Styles */
-  .item-block {
-    background: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
+  .item-content {
+    background: var(--bg-body);
     padding: 12px;
-    margin-bottom: 10px;
+    border-radius: 12px;
     position: relative;
+    z-index: 2;
+    transition: transform 0.2s ease;
+    touch-action: pan-y;
+    border: 1px solid var(--border-color);
   }
 
   .item-row {
@@ -224,99 +329,175 @@
   .qty-row input {
     height: 40px;
     font-size: 13px;
+    font-weight: 600;
   }
 
   /* Action Buttons */
   .add-recipient-btn {
     width: 100%;
-    background: var(--primary-light);
-    color: var(--primary);
-    border: 1px dashed var(--primary);
-    border-radius: 10px;
-    height: 44px;
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+    border: 1px dashed rgba(99, 102, 241, 0.4);
+    border-radius: 12px;
+    height: 46px;
     font-weight: 600;
+    font-size: 13px;
     cursor: pointer;
-    margin-bottom: 20px;
-    transition: background 0.2s;
+    margin-bottom: 16px;
+    transition: all 0.2s;
   }
 
   .add-recipient-btn:hover {
-    background: #e0e7ff;
+    background: rgba(99, 102, 241, 0.25);
   }
 
   .add-item-btn {
     width: 100%;
-    background: #ffffff;
+    background: var(--bg-card);
     color: var(--primary);
-    border: 1px solid #bfdbfe;
-    border-radius: 8px;
-    height: 36px;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 10px;
+    height: 40px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     margin-top: 8px;
-    transition: background 0.15s;
+    transition: all 0.15s;
   }
 
   .add-item-btn:hover {
-    background: #f0fdf4; /* gentle hover */
     background: var(--primary-light);
   }
 
-  /* Total & Footer Bar */
+  /* Summary & Buttons */
   .summary-box {
+    margin-top: 18px;
+    padding: 16px;
+    background: var(--bg-surface);
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+  }
+
+  .grand-total {
+    font-size: 15px;
+    font-weight: 700;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--primary-light);
-    padding: 16px 20px;
-    border-radius: 12px;
-    margin: 24px 0 16px 0;
+    color: var(--text-main);
   }
 
-  .summary-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-muted);
-  }
-
-  .summary-total {
-    font-size: 20px;
-    font-weight: 700;
+  .grand-total span {
     color: var(--primary);
+    font-size: 18px;
   }
 
-  .save-btn {
+  .btn {
     width: 100%;
     height: 48px;
-    background: var(--primary);
-    color: white;
     border: none;
     border-radius: 12px;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    transition: all 0.2s ease;
   }
 
-  .save-btn:hover {
-    background: var(--primary-hover);
+  .btn:active { transform: scale(0.96); }
+  .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+  .btn-primary:hover { background: var(--primary-hover); }
+  .btn-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+  .btn-secondary { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
+  .btn-ghost { background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-color); }
+
+  /* Viewer Tab Styles */
+  .recipient-group-card {
+    margin-top: 16px;
+    background: var(--bg-surface);
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
 
-  .save-btn:active {
-    transform: scale(0.99);
+  .recipient-header {
+    background: rgba(99, 102, 241, 0.1);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 13px;
+    color: #a5b4fc;
+    border-bottom: 1px solid var(--border-color);
   }
 
-  /* Print / Result Layout Customizations */
-  .invoice-preview {
-    max-width: 750px;
-    margin: 40px auto;
-    background: #fff;
-    padding: 40px;
+  .recipient-items-list {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .viewer-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .add-item-modal {
+    margin-top: 18px;
+    padding: 18px;
+    background: var(--bg-surface);
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    font-family: 'Inter', sans-serif;
+    border: 1px solid var(--border-color);
   }
+  
+  .add-item-modal input {
+    margin-top: 8px;
+    height: 44px;
+  }
+
+  .row-2 {
+    display: flex;
+    gap: 10px;
+  }
+
+  .hidden { display: none !important; }
+
+  .invoice-preview {
+    max-width: 520px;
+    margin: auto;
+    background: var(--bg-card);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    background: rgba(0,0,0,0.15);
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+  }
+
+  td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+    color: var(--text-main);
+  }
+
+  tr:last-child td { border-bottom: none; }
 </style>
 </head>
 
@@ -324,117 +505,311 @@
 
 <div class="app-container" id="mainCard">
   <div class="header-row">
-    <h2>Invoice Entry</h2>
-    <div class="quick-links-wrapper">
-      <button class="quick-links-btn" onclick="toggleLinks()">☰</button>
-      <div class="quick-links-menu" id="quickLinksMenu">
-        <a href="https://oprasannakumar.github.io/MonthlytransactionsGoogleSheets/" target="_blank">
-          📊 Monthly Transactions
-        </a>
-        <a href="https://oprasannakumar.github.io/LoanTransferGoogleSheets/" target="_blank">
-          💳 Loan Entry
-        </a>
+    <h2 id="appTitle">🧾 Invoice Entry</h2>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" id="tabCreateBtn" onclick="switchTab('create')">📝 Create Invoice</button>
+    <button class="tab-btn" id="tabViewBtn" onclick="switchTab('view')">📋 View & Manage</button>
+  </div>
+
+  <!-- ================= CREATE TAB ================= -->
+  <div id="createTabContent">
+    <div class="form-row-grid">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="billDate">
+      </div>
+      <div class="form-group">
+        <label>Invoice Number</label>
+        <input type="text" id="invoiceNumber" placeholder="Auto if empty">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Dealer</label>
+      <div class="custom-select-wrapper">
+        <input type="text" id="dealerSelect" placeholder="Type dealer name" autocomplete="off">
+        <div class="custom-options-list" id="dealerDropdown"></div>
+      </div>
+    </div>
+
+    <div id="recipientsContainer" style="margin-top: 16px;"></div>
+
+    <button id="addRecipientBtn" class="add-recipient-btn" onclick="addRecipient()" style="display:none;">
+      + Add Recipient Group
+    </button>
+
+    <div class="summary-box">
+      <div class="grand-total">
+        <span>Grand Total:</span> ₹<span id="liveTotal">0.00</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 18px;">
+      <button class="btn btn-primary" onclick="saveInvoice()">Save & Generate Invoice</button>
+    </div>
+  </div>
+
+  <!-- ================= VIEW & MANAGE TAB ================= -->
+  <div id="viewTabContent" class="hidden">
+    <div class="form-row-grid">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="viewDate" onchange="loadInvoices()">
+      </div>
+      <div class="form-group">
+        <label>Invoice Number</label>
+        <div class="custom-select-wrapper">
+          <input type="text" readonly id="viewInvoiceInput" class="select-input" value="Select date first" disabled>
+          <div class="custom-options-list" id="viewInvoiceDropdown"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="viewer-actions">
+      <button class="btn btn-secondary" onclick="toggleAddItemModal()">➕ Add Item</button>
+      <button class="btn btn-danger" onclick="deleteEntireInvoice()">🗑 Delete Invoice</button>
+    </div>
+
+    <div id="groupedItemsContainer" class="hidden"></div>
+
+    <div id="viewerSummaryBox" class="summary-box hidden" style="margin-top:16px;">
+      <div class="grand-total">
+        <span>Grand Total:</span> ₹<span id="viewerGrandTotal">0.00</span>
+      </div>
+    </div>
+
+    <div id="addItemModal" class="add-item-modal hidden">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Item Name</label>
+        <input id="newItemName" placeholder="Item name">
+      </div>
+      <div class="row-2" style="margin-top:10px;">
+        <div class="form-group" style="flex:1; margin-bottom:0;"><label>Quantity</label><input id="newItemQty" type="number" placeholder="Qty" oninput="calcViewerModal('qty')"></div>
+        <div class="form-group" style="flex:1; margin-bottom:0;"><label>Price</label><input id="newItemPrice" type="number" placeholder="Price" oninput="calcViewerModal('price')"></div>
+      </div>
+      <div class="form-group" style="margin-top:10px; margin-bottom:0;">
+        <label>Total</label>
+        <input id="newItemTotal" type="number" placeholder="Total" oninput="calcViewerModal('total')">
+      </div>
+      <div class="form-group" style="margin-top:10px; margin-bottom:12px;">
+        <label>Recipient</label>
+        <div class="custom-select-wrapper">
+          <input type="text" readonly id="newItemRecipient" class="select-input" value="Self">
+          <div class="custom-options-list" id="newItemRecipientDropdown"></div>
+        </div>
+      </div>
+      <div class="viewer-actions" style="margin-top:0;">
+        <button class="btn btn-primary" onclick="confirmAddViewerItem()">Save Item</button>
+        <button class="btn btn-ghost" onclick="toggleAddItemModal()">Cancel</button>
       </div>
     </div>
   </div>
 
-  <div class="form-row-grid">
-    <div class="form-group">
-      <label>Date</label>
-      <input type="date" id="billDate">
-    </div>
-    <div class="form-group">
-      <label>Invoice Number</label>
-      <input type="text" id="invoiceNumber" placeholder="Auto if empty">
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label>Dealer</label>
-    <input list="dealerList" id="dealerSelect" placeholder="Type dealer name">
-    <datalist id="dealerList"></datalist>
-  </div>
-
-  <!-- Recipient Blocks Container -->
-  <div id="recipientsContainer" style="margin-top: 20px;"></div>
-
-  <button id="addRecipientBtn" class="add-recipient-btn" onclick="addRecipient()" style="display:none;">
-    + Add Recipient Group
-  </button>
-
-  <div class="summary-box">
-    <span class="summary-label">Grand Total</span>
-    <span class="summary-total" id="liveTotal">₹0.00</span>
-  </div>
-
-  <button class="save-btn" onclick="saveInvoice()">Save & Generate Invoice</button>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyGbUkkZBP480n_U_fsCNppCD6T06GT0Tbh4gI1PsBxGdmc-wpnKHzZi-kahxderWpv/exec";
+const API_ENTRY = "https://script.google.com/macros/s/AKfycbyGbUkkZBP480n_U_fsCNppCD6T06GT0Tbh4gI1PsBxGdmc-wpnKHzZi-kahxderWpv/exec";
+const API_VIEWER = "https://script.google.com/macros/s/AKfycbzO4WHFteF9y4woSNXo3P62pfzUGAT0l5C9anWVcZ0Whx4eqJlgpe4lJ9oWgzVY_Eel/exec";
 const API_KEY = "9848o22338B!";
 
 const RECIPIENT_OPTIONS = [
-  "Select",
-  "Self",
-  "House",
-  "Mother",
-  "Grand Father",
-  "Chinnama",
-  "Family",
-  "Pedhamma",
-  "Vasavi",
-  "Other"
+  "Select", "Self", "House", "Mother", "Grand Father", "Chinnama", "Family", "Pedhamma", "Vasavi", "Other"
 ];
 
 let groceries = {};
 let dealerItems = [];
 
-/* ---------- INIT ---------- */
+// Close custom dropdowns when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.custom-select-wrapper')) {
+    document.querySelectorAll('.custom-options-list').forEach(l => l.classList.remove('show'));
+  }
+});
+
+// Helper for generating custom options dynamically
+function createDropdownOption(text, value, onClick) {
+  const div = document.createElement('div');
+  div.className = 'custom-option';
+  div.textContent = text;
+  div.dataset.value = value;
+  div.onclick = (e) => {
+    e.stopPropagation();
+    onClick(value, text);
+  };
+  return div;
+}
+
 window.onload = () => {
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth()+1).padStart(2,'0');
   const dd = String(today.getDate()).padStart(2,'0');
-  document.getElementById("billDate").value = `${yyyy}-${mm}-${dd}`;
+  const dateStr = `${yyyy}-${mm}-${dd}`;
 
-  fetch(`${API_URL}?key=${API_KEY}`)
+  document.getElementById("billDate").value = dateStr;
+  document.getElementById("viewDate").value = dateStr;
+
+  // Setup Add Item Modal recipient dropdown
+  setupViewerModalRecipient();
+
+  fetch(`${API_ENTRY}?key=${API_KEY}`)
     .then(r => r.json())
     .then(data => {
       groceries = data || {};
       populateDealers();
-    });
+    }).catch(() => {});
 };
 
+function switchTab(tab){
+  const createTab = document.getElementById("createTabContent");
+  const viewTab = document.getElementById("viewTabContent");
+  const createBtn = document.getElementById("tabCreateBtn");
+  const viewBtn = document.getElementById("tabViewBtn");
+  const title = document.getElementById("appTitle");
+
+  if(tab === 'create'){
+    createTab.classList.remove("hidden");
+    viewTab.classList.add("hidden");
+    createBtn.classList.add("active");
+    viewBtn.classList.remove("active");
+    title.innerText = "🧾 Invoice Entry";
+  } else {
+    createTab.classList.add("hidden");
+    viewTab.classList.remove("hidden");
+    createBtn.classList.remove("active");
+    viewBtn.classList.add("active");
+    title.innerText = "📊 Invoice Viewer";
+    loadInvoices();
+  }
+}
+
+/* ================= ISOLATED SWIPE HANDLER ================= */
+function enableSwipe(wrapper, content, onDelete, canDeleteCheck = () => true){
+  let startX = 0;
+  let startY = 0;
+  let currentX = 0;
+  let dragging = false;
+  let lockedAxis = null;
+
+  content.addEventListener("touchstart", (e) => {
+    e.stopPropagation();
+
+    // 1. Hide open dropdowns instantly so they don't visually glitch while swiping
+    document.querySelectorAll('.custom-options-list').forEach(l => l.classList.remove('show'));
+    
+    // 2. Trap the sliding content inside the parent container exactly on swipe start
+    wrapper.style.overflow = 'hidden';
+
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    currentX = startX;
+    dragging = true;
+    lockedAxis = null;
+    content.style.transition = 'none';
+  }, { passive: true });
+
+  content.addEventListener("touchmove", (e) => {
+    if(!dragging) return;
+    e.stopPropagation();
+    currentX = e.touches[0].clientX;
+    let currentY = e.touches[0].clientY;
+    
+    let diffX = currentX - startX;
+    let diffY = currentY - startY;
+
+    if (!lockedAxis) {
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 5) {
+        lockedAxis = 'horizontal';
+      } else if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 5) {
+        lockedAxis = 'vertical';
+      }
+    }
+
+    if (lockedAxis === 'horizontal') {
+      if (e.cancelable) e.preventDefault();
+      if(diffX < 0){
+        content.style.transform = `translateX(${Math.max(diffX, -120)}px)`;
+      } else {
+        content.style.transform = `translateX(0px)`;
+      }
+    }
+  }, { passive: false });
+
+  content.addEventListener("touchend", (e) => {
+    if (!dragging) return;
+    e.stopPropagation();
+    dragging = false;
+    content.style.transition = 'transform 0.2s ease';
+    
+    if (lockedAxis === 'horizontal' && (currentX - startX < -80) && canDeleteCheck()){
+      content.style.transform = 'translateX(-100%)';
+      setTimeout(() => {
+        onDelete();
+      }, 200);
+    } else {
+      content.style.transform = "translateX(0)";
+      // 3. Restore overflow so dropdowns can break out of the box again, only after snap back finishes
+      setTimeout(() => {
+        if(wrapper.isConnected) wrapper.style.overflow = 'visible';
+      }, 200);
+    }
+    lockedAxis = null;
+  });
+}
+
+/* ================= CREATE LOGIC ================= */
 function updateTotal(){
   let total = 0;
   document.querySelectorAll(".item-block").forEach(w => {
     const inputs = w.querySelectorAll(".qty-row input");
     if(inputs[2]) {
-      const val = Number(inputs[2].value || 0);
-      total += val;
+      total += Number(inputs[2].value || 0);
     }
   });
-  document.getElementById("liveTotal").innerText = "₹" + total.toFixed(2);
+  document.getElementById("liveTotal").innerText = total.toFixed(2);
 }
 
-/* ---------- SEARCHABLE DEALER ---------- */
 function populateDealers(){
-  const list = document.getElementById("dealerList");
-  list.innerHTML = "";
-
+  const dropdown = document.getElementById("dealerDropdown");
+  const input = document.getElementById("dealerSelect");
   const set = new Set();
-  Object.values(groceries).forEach(a =>
-    a.forEach(d => set.add(d.dealer))
-  );
+  
+  Object.values(groceries).forEach(a => a.forEach(d => set.add(d.dealer)));
+  const dealers = [...set].sort();
 
-  [...set].sort().forEach(d => {
-    const opt = document.createElement("option");
-    opt.value = d;
-    list.appendChild(opt);
+  const renderDealers = (filter = "") => {
+    dropdown.innerHTML = "";
+    const filtered = dealers.filter(d => d.toLowerCase().includes(filter.toLowerCase()));
+    
+    if (filtered.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'custom-option empty-option';
+      empty.textContent = 'No dealers found';
+      dropdown.appendChild(empty);
+      return;
+    }
+
+    filtered.forEach(d => {
+      dropdown.appendChild(createDropdownOption(d, d, (val) => {
+        input.value = val;
+        dropdown.classList.remove('show');
+        onDealerChange();
+      }));
+    });
+  };
+
+  input.addEventListener('focus', () => { 
+    document.querySelectorAll('.custom-options-list').forEach(l => l.classList.remove('show'));
+    dropdown.classList.add('show'); 
+    renderDealers(input.value); 
   });
-
-  document.getElementById("dealerSelect").addEventListener("change", onDealerChange);
+  
+  input.addEventListener('input', (e) => { 
+    dropdown.classList.add('show'); 
+    renderDealers(e.target.value); 
+  });
 }
 
 function onDealerChange(){
@@ -442,7 +817,6 @@ function onDealerChange(){
   const dealer = document.getElementById("dealerSelect").value;
   const container = document.getElementById("recipientsContainer");
   const addRecBtn = document.getElementById("addRecipientBtn");
-
   container.innerHTML = "";
 
   if(!dealer) {
@@ -463,313 +837,235 @@ function onDealerChange(){
   addRecipient();
 }
 
-/* ---------- ADD RECIPIENT ---------- */
 function addRecipient(){
   const container = document.getElementById("recipientsContainer");
   const recId = "rec_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5);
 
-  const block = document.createElement("div");
-  block.className = "recipient-block";
-  block.id = recId;
+  const wrapper = document.createElement("div");
+  wrapper.className = "recipient-swipe-container";
+  wrapper.id = recId;
 
-  block.innerHTML = `
-    <div class="recipient-top-bar">
-      <span class="recipient-tag">Recipient Group</span>
-      ${container.children.length > 0 ? `<button type="button" class="remove-recipient-btn" onclick="removeRecipient('${recId}')">Remove Group</button>` : ''}
+  wrapper.innerHTML = `
+    <div class="swipe-bg-group">Delete Group</div>
+    <div class="recipient-block">
+      <div class="recipient-top-bar">
+        <span class="recipient-tag">Recipient Group</span>
+        <span class="recipient-swipe-instruction">Swipe left to remove group</span>
+      </div>
+      <div class="custom-select-wrapper form-group" style="margin-bottom:10px;">
+        <input type="text" readonly class="recipient-select select-input" value="Select">
+        <div class="custom-options-list recipient-dropdown-list"></div>
+      </div>
+      <div class="form-group recipient-other-group" style="display:none; margin-bottom:10px;">
+        <input type="text" class="recipient-other-name" placeholder="Enter custom recipient name">
+      </div>
+      <div class="recipient-items-container"></div>
+      <button type="button" class="add-item-btn" onclick="addItemToRecipient('${recId}')">+ Add Item</button>
     </div>
-    
-    <div class="form-group" style="margin-bottom:12px;">
-      <select class="recipient-select" onchange="handleRecipientSelectChange(this)">
-        ${RECIPIENT_OPTIONS.map(opt => `<option value="${opt}">${opt}</option>`).join("")}
-      </select>
-    </div>
-
-    <div class="form-group recipient-other-group" style="display:none; margin-bottom:12px;">
-      <input type="text" class="recipient-other-name" placeholder="Enter custom recipient name">
-    </div>
-
-    <div class="recipient-items-container"></div>
-
-    <button type="button" class="add-item-btn" onclick="addItemToRecipient('${recId}')">+ Add Item</button>
   `;
 
-  container.appendChild(block);
+  // Bind custom dropdown logic
+  const recInput = wrapper.querySelector(".recipient-select");
+  const recDropdown = wrapper.querySelector(".recipient-dropdown-list");
+  
+  recInput.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('.custom-options-list').forEach(l => { if(l !== recDropdown) l.classList.remove('show'); });
+    recDropdown.classList.toggle('show');
+  });
+
+  RECIPIENT_OPTIONS.forEach(opt => {
+    recDropdown.appendChild(createDropdownOption(opt, opt, (val) => {
+      recInput.value = val;
+      recDropdown.classList.remove('show');
+      handleRecipientSelectChange(recInput);
+    }));
+  });
+
+  const block = wrapper.querySelector(".recipient-block");
+  
+  enableSwipe(wrapper, block, () => {
+    wrapper.remove();
+    updateTotal();
+    const containerCheck = document.getElementById("recipientsContainer");
+    if(containerCheck.children.length === 0) {
+      addRecipient();
+    }
+  }, () => {
+    return document.querySelectorAll(".recipient-swipe-container").length > 1;
+  });
+
+  container.appendChild(wrapper);
   addItemToRecipient(recId);
 }
 
-function removeRecipient(recId){
-  const el = document.getElementById(recId);
-  if(el){
-    el.remove();
-    updateTotal();
-  }
-}
-
-function handleRecipientSelectChange(selectElem){
-  const block = selectElem.closest(".recipient-block");
+function handleRecipientSelectChange(inputElem){
+  const block = inputElem.closest(".recipient-block");
   const otherGroup = block.querySelector(".recipient-other-group");
-  if(selectElem.value === "Other"){
-    otherGroup.style.display = "block";
-  } else {
-    otherGroup.style.display = "none";
-  }
+  otherGroup.style.display = inputElem.value === "Other" ? "block" : "none";
 }
 
-/* ---------- ADD ITEM TO RECIPIENT ---------- */
 function addItemToRecipient(recId){
   if(!dealerItems.length) return;
-
   const recBlock = document.getElementById(recId);
   const itemsContainer = recBlock.querySelector(".recipient-items-container");
-
+  
   const wrapper = document.createElement("div");
   wrapper.className = "item-block";
-
-  const itemRow = document.createElement("div");
-  itemRow.className = "item-row";
-
-  const listId = "itemList_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5);
-
-  const sel = document.createElement("input");
-  sel.setAttribute("list", listId);
-  sel.placeholder = "Search or type item name...";
-
-  const dataList = document.createElement("datalist");
-  dataList.id = listId;
-  dataList.innerHTML = dealerItems.map(i =>
-    `<option value="${i.item}"></option>`
-  ).join("");
-
-  itemRow.append(sel);
-
-  const qtyRow = document.createElement("div");
-  qtyRow.className = "qty-row";
-
-  const qty = document.createElement("input");
-  qty.type = "number";
-  qty.placeholder = "Qty";
-
-  const price = document.createElement("input");
-  price.type = "number";
-  price.placeholder = "Price";
-
-  const total = document.createElement("input");
-  total.type = "number";
-  total.placeholder = "Total";
-
-  function recalc(source){
-    const q = Number(qty.value || 0);
-    const p = Number(price.value || 0);
-    const t = Number(total.value || 0);
-
-    if(q === 0) return;
-
-    if(source === "price"){
-      total.value = (q * p).toFixed(2);
-    }
-    if(source === "total"){
-      price.value = (t / q).toFixed(2);
-    }
-    updateTotal();
-  }
-
-  qty.oninput = () => recalc("price");
-  price.oninput = () => recalc("price");
-  total.oninput = () => recalc("total");
-
-  sel.onchange = () => {
-    const match = dealerItems.find(i => i.item === sel.value);
-    if(match){
-      price.value = match.price;
-      recalc("price");
-    }
-  };
-
-  qtyRow.append(qty, price, total);
-
-  const content = document.createElement("div");
-  content.className = "item-content";
-  content.append(itemRow, qtyRow);
-
-  wrapper.append(content, dataList);
-  itemsContainer.appendChild(wrapper);
-
-  enableSwipe(wrapper, content);
-}
-
-function enableSwipe(wrapper, content){
-  let startX = 0;
-  let currentX = 0;
-  let dragging = false;
-
-  content.addEventListener("touchstart", (e) => {
-    startX = e.touches[0].clientX;
-    currentX = startX;
-    dragging = true;
-  });
-
-  content.addEventListener("touchmove", (e) => {
-    if(!dragging) return;
-    currentX = e.touches[0].clientX;
-    let diff = currentX - startX;
-    if(diff < 0){
-      content.style.transform = `translateX(${Math.max(diff, -100)}px)`;
-    }
-  });
-
-  content.addEventListener("touchend", () => {
-    dragging = false;
-    if(currentX - startX < -80){
-      wrapper.remove();
-      updateTotal();
-    } else {
-      content.style.transform = "translateX(0)";
-    }
-  });
-}
-
-/* ---------- SAVE + RENDER ---------- */
-function saveInvoice(){
-  const dealer = document.getElementById("dealerSelect").value;
-  if(!dealer){ alert("Please select a dealer"); return; }
-
-  const billDateVal = document.getElementById("billDate").value;
-  let billNo = document.getElementById("invoiceNumber").value.trim();
-
-  if(!billNo){
-    billNo = "INV-" + Date.now();
-  }
-
-  let items = [];
-  let grandTotal = 0;
-  let hasValidRecipient = true;
-
-  document.querySelectorAll(".recipient-block").forEach(recBlock => {
-    const sel = recBlock.querySelector(".recipient-select");
-    let recipientName = sel.value;
-
-    if(recipientName === "Select"){
-      hasValidRecipient = false;
-    } else if(recipientName === "Other"){
-      const otherInput = recBlock.querySelector(".recipient-other-name");
-      recipientName = otherInput.value.trim() || "Other";
-    }
-
-    recBlock.querySelectorAll(".item-block").forEach(w => {
-      const itemInput = w.querySelector("input[list]");
-      const item = itemInput ? itemInput.value.trim() : "";
-      const inputs = w.querySelectorAll(".qty-row input");
-
-      const qty = Number(inputs[0].value);
-      const price = Number(inputs[1].value);
-      const total = Number(inputs[2].value);
-
-      if(!item || !qty) return;
-
-      grandTotal += total;
-      items.push({
-        recipient: recipientName,
-        item: item,
-        qty: qty,
-        price: price,
-        total: total
-      });
-    });
-  });
-
-  if(!hasValidRecipient){
-    alert("Please choose a valid recipient option for all groups.");
-    return;
-  }
-
-  if(!items.length){ alert("Please add at least one item."); return; }
-
-  renderInvoice(billNo, billDateVal, dealer, items, grandTotal);
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      key: API_KEY,
-      action: "saveInvoice",
-      shopName: dealer,
-      billNo: billNo,
-      billDate: billDateVal,
-      items: items
-    })
-  });
-}
-
-/* ---------- RENDER INVOICE ---------- */
-function renderInvoice(billNo, date, dealer, items, grandTotal){
-  document.getElementById("mainCard").style.display = "none";
-
-  const container = document.createElement("div");
-  container.className = "invoice-preview";
-
-  container.innerHTML = `
-    <h2 style="margin-bottom: 16px;">Invoice Receipt</h2>
-
-    <div style="margin-bottom:24px; font-size: 14px; color: var(--text-muted); line-height: 1.6;">
-      <div>
-        <strong>Invoice No:</strong>
-        <span id="copyInvoice" style="
-          background: var(--primary-light);
-          padding: 4px 8px;
-          border-radius: 6px;
-          cursor: pointer;
-          color: var(--primary);
-          font-weight: 600;
-        ">${billNo}</span>
-        <span id="copyMsg" style="margin-left:8px; font-size:12px; color:green; display:none;">Copied ✓</span>
+  wrapper.innerHTML = `
+    <div class="swipe-bg-item">Delete Item</div>
+    <div class="item-content">
+      <div class="custom-select-wrapper item-row">
+        <input type="text" placeholder="Search or type item name..." class="item-search-input" autocomplete="off">
+        <div class="custom-options-list item-dropdown-list"></div>
       </div>
-      <div><strong>Date:</strong> ${formatDisplayDate(date)}</div>
-      <div><strong>Dealer:</strong> ${dealer}</div>
-    </div>
-
-    <table style="width:100%; border-collapse:collapse; font-size: 14px;">
-      <thead>
-        <tr style="background:#f8fafc; border-bottom: 2px solid var(--border-color);">
-          <th style="padding:12px; text-align:left; color: var(--text-muted);">Recipient</th>
-          <th style="padding:12px; text-align:left; color: var(--text-muted);">Item</th>
-          <th style="padding:12px; text-align:right; color: var(--text-muted);">Qty</th>
-          <th style="padding:12px; text-align:right; color: var(--text-muted);">Price</th>
-          <th style="padding:12px; text-align:right; color: var(--text-muted);">Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${items.map(i => `
-          <tr>
-            <td style="padding:12px; border-bottom:1px solid #eee; font-weight:500; color:var(--primary);">${i.recipient}</td>
-            <td style="padding:12px; border-bottom:1px solid #eee;">${i.item}</td>
-            <td style="padding:12px; text-align:right; border-bottom:1px solid #eee;">${i.qty}</td>
-            <td style="padding:12px; text-align:right; border-bottom:1px solid #eee;">₹${i.price}</td>
-            <td style="padding:12px; text-align:right; border-bottom:1px solid #eee;">₹${i.total}</td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-
-    <div style="text-align:right; font-size:20px; font-weight:700; margin-top:24px; color: var(--primary);">
-      Grand Total: ₹${grandTotal.toFixed(2)}
-    </div>
-
-    <div style="margin-top:32px; display:flex; gap:12px;">
-      <button onclick="window.print()" style="flex:1; height:46px; border:none; border-radius:10px; background:var(--primary); color:white; font-weight:600; cursor:pointer;">Print Invoice</button>
-      <button onclick="location.reload()" style="flex:1; height:46px; border:none; border-radius:10px; background:#e2e8f0; color:var(--text-main); font-weight:600; cursor:pointer;">New Invoice</button>
+      <div class="qty-row">
+        <input type="number" placeholder="Qty" class="qty-input">
+        <input type="number" placeholder="Price" class="price-input">
+        <input type="number" placeholder="Total" class="total-input">
+      </div>
     </div>
   `;
 
-  document.body.appendChild(container);
+  const sel = wrapper.querySelector(".item-search-input");
+  const dropdown = wrapper.querySelector(".item-dropdown-list");
+  const qty = wrapper.querySelector(".qty-input");
+  const price = wrapper.querySelector(".price-input");
+  const total = wrapper.querySelector(".total-input");
+  const content = wrapper.querySelector(".item-content");
 
-  navigator.clipboard.writeText(billNo).then(() => {
-    const msg = document.getElementById("copyMsg");
-    if(msg){
-      msg.style.display = "inline";
-      setTimeout(() => msg.style.display = "none", 1500);
+  // Custom Searchable Items Dropdown Logic
+  const renderItems = (filter = "") => {
+    dropdown.innerHTML = "";
+    const filtered = dealerItems.filter(i => i.item.toLowerCase().includes(filter.toLowerCase()));
+    
+    if(filtered.length === 0){
+      const empty = document.createElement('div');
+      empty.className = 'custom-option empty-option';
+      empty.textContent = 'No item match found';
+      dropdown.appendChild(empty);
+      return;
     }
+
+    filtered.forEach(i => {
+      dropdown.appendChild(createDropdownOption(i.item, i.item, (val) => {
+        sel.value = val;
+        price.value = i.price;
+        recalc('price');
+        dropdown.classList.remove('show');
+      }));
+    });
+  };
+
+  sel.addEventListener('focus', () => { 
+    document.querySelectorAll('.custom-options-list').forEach(l => l.classList.remove('show'));
+    dropdown.classList.add('show'); 
+    renderItems(sel.value); 
+  });
+  
+  sel.addEventListener('input', (e) => { 
+    dropdown.classList.add('show'); 
+    renderItems(e.target.value); 
   });
 
-  document.getElementById("copyInvoice").onclick = function(){
+  function recalc(src){
+    const q = Number(qty.value || 0);
+    const p = Number(price.value || 0);
+    const t = Number(total.value || 0);
+    if(q === 0) return;
+    if(src === 'price') total.value = (q * p).toFixed(2);
+    if(src === 'total') price.value = (t / q).toFixed(2);
+    updateTotal();
+  }
+
+  qty.oninput = () => recalc('price');
+  price.oninput = () => recalc('price');
+  total.oninput = () => recalc('total');
+
+  enableSwipe(wrapper, content, () => {
+    wrapper.remove();
+    updateTotal();
+  }, () => {
+    return itemsContainer.children.length > 1;
+  });
+
+  itemsContainer.appendChild(wrapper);
+}
+
+function saveInvoice(){
+  const dealer = document.getElementById("dealerSelect").value;
+  if(!dealer){ alert("Please select a dealer"); return; }
+  const billDateVal = document.getElementById("billDate").value;
+  let billNo = document.getElementById("invoiceNumber").value.trim() || ("INV-" + Date.now());
+
+  let items = [];
+  let grandTotal = 0;
+  let valid = true;
+
+  document.querySelectorAll(".recipient-swipe-container").forEach(recContainer => {
+    const recBlock = recContainer.querySelector(".recipient-block");
+    const sel = recBlock.querySelector(".recipient-select");
+    let recipientName = sel.value;
+    if(recipientName === "Select") valid = false;
+    if(recipientName === "Other") recipientName = recBlock.querySelector(".recipient-other-name").value.trim() || "Other";
+
+    recBlock.querySelectorAll(".item-block").forEach(w => {
+      const item = w.querySelector(".item-search-input").value.trim();
+      const qty = Number(w.querySelector(".qty-input").value);
+      const price = Number(w.querySelector(".price-input").value);
+      const total = Number(w.querySelector(".total-input").value);
+      if(!item || !qty) return;
+      grandTotal += total;
+      items.push({ recipient: recipientName, item, qty, price, total });
+    });
+  });
+
+  if(!valid){ alert("Please select a valid recipient for all groups."); return; }
+  if(!items.length){ alert("Please add at least one item."); return; }
+
+  renderInvoiceReceipt(billNo, billDateVal, dealer, items, grandTotal);
+
+  fetch(API_ENTRY, {
+    method: "POST",
+    body: JSON.stringify({ key: API_KEY, action: "saveInvoice", shopName: dealer, billNo, billDate: billDateVal, items })
+  }).catch(() => {});
+}
+
+function renderInvoiceReceipt(billNo, date, dealer, items, grandTotal){
+  document.getElementById("mainCard").style.display = "none";
+  const container = document.createElement("div");
+  container.className = "invoice-preview";
+  container.innerHTML = `
+    <h2 style="margin-bottom: 16px;">Invoice Receipt</h2>
+    <div style="margin-bottom:20px; font-size:14px; color:var(--text-muted); line-height:1.6;">
+      <div><strong>Invoice No:</strong> <span id="copyInvoice" style="background:rgba(99, 102, 241, 0.15); padding:4px 8px; border-radius:6px; cursor:pointer; color:#818cf8; font-weight:600;">${billNo}</span> <span id="copyMsg" style="margin-left:8px; font-size:12px; color:#10b981; display:none;">Copied ✓</span></div>
+      <div><strong>Date:</strong> ${date}</div>
+      <div><strong>Dealer:</strong> ${dealer}</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left;">Recipient</th>
+          <th style="text-align:left;">Item</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${items.map(i => `<tr><td style="text-align:left; font-weight:500; color:#34d399;">${i.recipient}</td><td style="text-align:left;">${i.item}</td><td>${i.qty}</td><td>₹${i.price}</td><td>₹${i.total}</td></tr>`).join("")}
+      </tbody>
+    </table>
+    <div class="grand-total" style="margin-top:20px;">
+      <span>Grand Total:</span> ₹<span style="color:var(--primary); font-size:18px;">${grandTotal.toFixed(2)}</span>
+    </div>
+    <div style="margin-top:24px; display:flex; gap:10px;">
+      <button class="btn btn-primary" onclick="window.print()">Print Invoice</button>
+      <button class="btn btn-ghost" onclick="location.reload()">New Invoice</button>
+    </div>
+  `;
+  document.body.appendChild(container);
+  document.getElementById("copyInvoice").onclick = () => {
     navigator.clipboard.writeText(billNo);
     const msg = document.getElementById("copyMsg");
     msg.style.display = "inline";
@@ -777,31 +1073,191 @@ function renderInvoice(billNo, date, dealer, items, grandTotal){
   };
 }
 
-function formatDisplayDate(dateStr){
-  const d = new Date(dateStr);
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  return d.getDate() + "-" + months[d.getMonth()] + "-" + d.getFullYear();
+/* ================= VIEWER LOGIC ================= */
+function formatDateAPI(v){
+  const d = new Date(v);
+  return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
 }
 
-function toggleLinks(){
-  const menu = document.getElementById("quickLinksMenu");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
+function loadInvoices(){
+  const dVal = document.getElementById("viewDate").value;
+  if(!dVal) return;
+  
+  const invInput = document.getElementById("viewInvoiceInput");
+  const invDropdown = document.getElementById("viewInvoiceDropdown");
+  
+  invInput.disabled = true;
+  invInput.value = "Loading bills...";
+  invDropdown.innerHTML = "";
+
+  // Remove old click listener to avoid duplicates
+  const clone = invInput.cloneNode(true);
+  invInput.parentNode.replaceChild(clone, invInput);
+  const newInvInput = document.getElementById("viewInvoiceInput");
+
+  fetch(`${API_VIEWER}?action=getInvoices&date=${formatDateAPI(dVal)}`)
+    .then(r => r.json())
+    .then(d => {
+      invDropdown.innerHTML = "";
+      if(!d.length){
+        newInvInput.value = "No bills found";
+        document.getElementById("groupedItemsContainer").classList.add("hidden");
+        document.getElementById("viewerSummaryBox").classList.add("hidden");
+        return;
+      }
+      
+      newInvInput.disabled = false;
+      newInvInput.value = "-- Select Invoice --";
+      
+      newInvInput.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.custom-options-list').forEach(l => { if(l !== invDropdown) l.classList.remove('show'); });
+        invDropdown.classList.toggle('show');
+      });
+
+      d.forEach(b => {
+        invDropdown.appendChild(createDropdownOption(b, b, (val) => {
+          newInvInput.value = val;
+          newInvInput.dataset.value = val;
+          invDropdown.classList.remove('show');
+          loadItems();
+        }));
+      });
+    }).catch(() => { newInvInput.value = "Failed to load"; });
 }
 
-document.addEventListener("click", function(e){
-  if(!e.target.closest(".quick-links-wrapper")){
-    const menu = document.getElementById("quickLinksMenu");
-    if(menu) menu.style.display = "none";
-  }
-});
+function loadItems(){
+  const invNo = document.getElementById("viewInvoiceInput").dataset.value;
+  if(!invNo) return;
+  fetch(`${API_VIEWER}?action=getItems&invoiceNo=${invNo}`)
+    .then(r => r.json())
+    .then(items => {
+      let g = 0;
+      const grouped = {};
+      items.forEach(i => {
+        const t = Number(i.total);
+        const rec = i.recipient || "Self";
+        g += t;
+        if(!grouped[rec]) grouped[rec] = { items: [], total: 0 };
+        grouped[rec].items.push(i);
+        grouped[rec].total += t;
+      });
+
+      const container = document.getElementById("groupedItemsContainer");
+      container.innerHTML = "";
+
+      Object.entries(grouped).forEach(([recipient, group]) => {
+        const groupCard = document.createElement("div");
+        groupCard.className = "recipient-group-card";
+        groupCard.innerHTML = `
+          <div class="recipient-header">
+            <span>👤 ${recipient}</span>
+            <span style="color:var(--primary);">₹${group.total.toFixed(2)}</span>
+          </div>
+          <div class="recipient-items-list"></div>
+        `;
+        const itemsList = groupCard.querySelector(".recipient-items-list");
+
+        group.items.forEach(i => {
+          const itemBlock = document.createElement("div");
+          itemBlock.className = "item-block";
+          itemBlock.innerHTML = `
+            <div class="swipe-bg-item">Delete Item</div>
+            <div class="item-content">
+              <div style="display:flex; justify-content:space-between; font-weight:600; font-size:13px;">
+                <span>${i.item}</span>
+                <span style="color:var(--primary);">₹${Number(i.total).toFixed(2)}</span>
+              </div>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+                Qty: ${i.qty} &bull; Price: ₹${Number(i.price).toFixed(2)}
+              </div>
+            </div>
+          `;
+          const content = itemBlock.querySelector(".item-content");
+          enableSwipe(itemBlock, content, () => {
+            deleteViewerItem(i.row);
+          }, () => {
+            return itemsList.children.length > 1;
+          });
+          itemsList.appendChild(itemBlock);
+        });
+
+        container.appendChild(groupCard);
+      });
+
+      container.classList.remove("hidden");
+      document.getElementById("viewerSummaryBox").classList.remove("hidden");
+      document.getElementById("viewerGrandTotal").innerText = g.toFixed(2);
+    }).catch(() => {});
+}
+
+function setupViewerModalRecipient() {
+  const modalRecInput = document.getElementById("newItemRecipient");
+  const modalRecDropdown = document.getElementById("newItemRecipientDropdown");
+  
+  modalRecInput.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('.custom-options-list').forEach(l => { if(l !== modalRecDropdown) l.classList.remove('show'); });
+    modalRecDropdown.classList.toggle('show');
+  });
+
+  // Skip the "Select" option for the Add item modal (defaulting to Self)
+  RECIPIENT_OPTIONS.slice(1).forEach(opt => {
+    modalRecDropdown.appendChild(createDropdownOption(opt, opt, (val) => {
+      modalRecInput.value = val;
+      modalRecDropdown.classList.remove('show');
+    }));
+  });
+}
+
+function toggleAddItemModal(){
+  document.getElementById("addItemModal").classList.toggle("hidden");
+}
+
+function calcViewerModal(src){
+  const q = Number(newItemQty.value || 0);
+  const p = Number(newItemPrice.value || 0);
+  const t = Number(newItemTotal.value || 0);
+  if(q === 0) return;
+  if(src === 'qty' || src === 'price') newItemTotal.value = (q * p).toFixed(2);
+  if(src === 'total') newItemPrice.value = (t / q).toFixed(2);
+}
+
+function confirmAddViewerItem(){
+  const invNo = document.getElementById("viewInvoiceInput").dataset.value;
+  const dVal = document.getElementById("viewDate").value;
+  if(!invNo || !newItemName.value || !newItemQty.value || !dVal) return alert("Fill all required fields");
+
+  const price = newItemPrice.value || (newItemTotal.value / newItemQty.value);
+  const recipient = document.getElementById("newItemRecipient").value;
+  
+  fetch(`${API_VIEWER}?action=addItem&billNo=${encodeURIComponent(invNo)}&item=${encodeURIComponent(newItemName.value)}&qty=${newItemQty.value}&price=${price}&date=${dVal}&recipient=${encodeURIComponent(recipient)}`)
+    .then(() => {
+      newItemName.value = newItemQty.value = newItemPrice.value = newItemTotal.value = "";
+      toggleAddItemModal();
+      loadItems();
+    });
+}
+
+function deleteViewerItem(row){
+  fetch(`${API_VIEWER}?action=deleteItem&row=${row}`).then(loadItems);
+}
+
+function deleteEntireInvoice(){
+  const invNo = document.getElementById("viewInvoiceInput").dataset.value;
+  if(!invNo || !confirm(`Delete entire invoice ${invNo}?`)) return;
+  fetch(`${API_VIEWER}?action=deleteInvoice&billNo=${encodeURIComponent(invNo)}`).then(() => {
+    document.getElementById("groupedItemsContainer").classList.add("hidden");
+    document.getElementById("viewerSummaryBox").classList.add("hidden");
+    loadInvoices();
+  });
+}
 </script>
 
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Invoice App Registered'))
-        .catch(err => console.log('PWA Registration Failed', err));
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
     });
   }
 </script>
