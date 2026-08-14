@@ -694,6 +694,11 @@ function enableSwipe(wrapper, content, onDelete, canDeleteCheck = () => true){
   let lockedAxis = null;
 
   content.addEventListener("touchstart", (e) => {
+    // FIX: If tapping inside a dropdown list, let the click happen, ignore swipe initiation.
+    if (e.target.closest('.custom-options-list')) {
+      return; 
+    }
+
     e.stopPropagation();
 
     // 1. Hide open dropdowns instantly so they don't visually glitch while swiping
